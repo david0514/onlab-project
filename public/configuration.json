@@ -22,14 +22,14 @@
       ],
       "transitions": [
         {
-          "from": "RELEASED",
-          "to": "PRESSED",
-          "animation": "anim1"
+          "from": "",
+          "to": "halad",
+          "nameInGLB": "orso"
         },
         {
           "from": "RELEASED",
           "to": "PRESSED",
-          "animation": "anim2"
+          "nameInGLB": "anim2"
         }
       ]
     }

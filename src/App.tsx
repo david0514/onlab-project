@@ -34,9 +34,9 @@ const onSceneReady = (scene: Scene) => {
     modelLoader.getConfiguratin();
     let plane = modelLoader.loadModel("plane");
     plane.setPosition(new Vector3(1,1,-1));
-    setTimeout(() => plane.playAnimation("extraKepesseg"), 4000);
+    //setTimeout(() => plane.playAnimation("extraKepesseg"), 4000);
     setTimeout(() => plane.setState("halad"), 10000);
-    setTimeout(() => plane.playAnimation("extraKepesseg"), 12000);
+    //setTimeout(() => plane.playAnimation("extraKepesseg"), 12000);
     setTimeout(() => plane.setState(""), 20000);
     setTimeout(() => plane.destroy(), 24000);
 

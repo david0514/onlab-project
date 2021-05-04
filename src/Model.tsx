@@ -1,4 +1,25 @@
-import {ISceneLoaderAsyncResult, SceneLoader, Vector3, Animation, Scene} from "@babylonjs/core";
+import {
+    ISceneLoaderAsyncResult,
+    SceneLoader,
+    Vector3,
+    Animation,
+    Scene,
+    AnimationGroup,
+    EventState
+} from "@babylonjs/core";
+
+class Transition {
+    public from: string
+    public to: string
+    public nameInGLB: string
+
+    constructor(from: string, to: string, nameInGLB: string) {
+        this.from = from;
+        this.to = to;
+        this.nameInGLB = nameInGLB;
+    }
+
+}
 
 export class Model {
     id: number;
@@ -6,6 +27,9 @@ export class Model {
     mesh: any;  //promise
     states: Map<string, string>; //promise
     animations: Map<string, string>; //promise
+    transitions: Array<Transition>; //promise
+    currentState: string;
+    nextState: string;
 
     constructor(typename: string, config: any, id: number) {
         this.id = id;
@@ -13,6 +37,9 @@ export class Model {
         this.states = new Map();
         this.animations = new Map();
         this.mesh = this.LoadFromGLB(typename, config);
+        this.transitions = new Array<Transition>();
+        this.currentState = "";
+        this.nextState = ".";
     }
 
     async LoadFromGLB(typename: string, config: any) {
@@ -33,6 +60,10 @@ export class Model {
                     this.animations.set(configuration.spaceshipTypes[i].animations[j].name, configuration.spaceshipTypes[i].animations[j].nameInGLB);
                 }
 
+                for (let j in configuration.spaceshipTypes[i].transitions) {
+                    this.transitions.push(new Transition(configuration.spaceshipTypes[i].transitions[j].from, configuration.spaceshipTypes[i].transitions[j].to, configuration.spaceshipTypes[i].transitions[j].nameInGLB));
+                }
+
                 result = await SceneLoader.ImportMeshAsync("", "", configuration.spaceshipTypes[i].url);
                 let founded = false;
                 for (let j in result.animationGroups) {
@@ -40,6 +71,7 @@ export class Model {
                         result.animationGroups[j].play(true);
                         founded = true;
                     } else {
+                        result.animationGroups[j].reset();
                         result.animationGroups[j].stop();
                     }
                 }
@@ -72,16 +104,63 @@ export class Model {
         }
     }
 
+    transitionEnd = async (eventData: AnimationGroup, eventState: EventState) => {
+        const result: ISceneLoaderAsyncResult = await this.mesh;
+        console.log(eventData.name + " atmenet animacio vege.");
+
+        for (const j in result.animationGroups) {
+            if (result.animationGroups[j].name == this.states.get(this.nextState)) {
+                result.animationGroups[j].start(true, 1, result.animationGroups[j].from, result.animationGroups[j].to, true);
+                this.currentState = this.nextState;
+                this.nextState = ".";
+                console.log("Uj allapotba lepett. (" + this.currentState + ") lejatszott animacio: " + result.animationGroups[j].name);
+            } else if (result.animationGroups[j].isPlaying) {
+                result.animationGroups[j].reset();
+                result.animationGroups[j].stop();
+            }
+        }
+        eventData.onAnimationGroupEndObservable.clear();
+    }
+
     async setState(stateName: string) {
         try {
             const result: ISceneLoaderAsyncResult = await this.mesh;
-            for (const i in result.animationGroups) {
-                if (result.animationGroups[i].name == this.states.get(stateName)) {
-                    result.animationGroups[i].start(true, 1, result.animationGroups[i].from, result.animationGroups[i].to, true);
-                } else if (result.animationGroups[i].isPlaying) {
-                    result.animationGroups[i].stop();
+            console.log("Allapotvaltas")
+            var transitionAvailable: Boolean = false;
+            this.nextState = stateName;
+
+            for (const i in this.transitions) {
+                if (this.transitions[i].from == this.currentState && this.transitions[i].to == stateName) {  //ha van átmenet ez fut le
+                    transitionAvailable = true;
+
+                    for (const j in result.animationGroups) {
+                        if (result.animationGroups[j].name == this.transitions[i].nameInGLB) {
+                            result.animationGroups[j].onAnimationGroupEndObservable.add(this.transitionEnd);
+                            result.animationGroups[j].start(false, 1, result.animationGroups[i].from, result.animationGroups[i].to, true);
+                            console.log("Atmenet animacio indul. (" + result.animationGroups[j].name + ")");
+                        } else if (result.animationGroups[j].isPlaying) {
+                            result.animationGroups[j].reset();
+                            result.animationGroups[j].stop();
+                        }
+                    }
+                    return;
                 }
             }
+
+            if (!transitionAvailable) {                         //ha nincs átmenet ez fut le
+                console.log("Nem talalhato atmenet animacio.");
+                for (const i in result.animationGroups) {
+                    if (result.animationGroups[i].name == this.states.get(stateName)) {
+                        result.animationGroups[i].start(true, 1, result.animationGroups[i].from, result.animationGroups[i].to, true);
+                        this.currentState = this.nextState;
+                        this.nextState = ".";
+                        console.log("Uj allapotba lepett. (" + this.currentState + ") lejatszott animacio: " + result.animationGroups[i].name);
+                    } else if (result.animationGroups[i].isPlaying) {
+                        result.animationGroups[i].stop();
+                    }
+                }
+            }
+
 
         } catch (error) {
             console.error(error);
@@ -94,6 +173,7 @@ export class Model {
             for (const i in result.animationGroups) {
                 if (result.animationGroups[i].name == this.animations.get(animationName)) {
                     result.animationGroups[i].start(false, 1, result.animationGroups[i].from, result.animationGroups[i].to, true);
+
                 }
             }
         } catch (error) {
