@@ -1,0 +1,37 @@
+{
+  "spaceshipTypes": [
+    {
+      "typename": "plane",
+      "url": "./models/planeWithPaint.glb",
+      "nameInGLB": "p",
+      "animations": [
+        {
+          "name": "extraKepesseg",
+          "nameInGLB": "orso"
+        }
+      ],
+      "states": [
+        {
+          "name": "",
+          "nameInGLB": "lebeg"
+        },
+        {
+          "name": "halad",
+          "nameInGLB": "halad"
+        }
+      ],
+      "transitions": [
+        {
+          "from": "RELEASED",
+          "to": "PRESSED",
+          "animation": "anim1"
+        },
+        {
+          "from": "RELEASED",
+          "to": "PRESSED",
+          "animation": "anim2"
+        }
+      ]
+    }
+  ]
+}
