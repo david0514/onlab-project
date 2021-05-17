@@ -46,25 +46,25 @@ export class Model {
         let configuration = await config;
         let result: ISceneLoaderAsyncResult;
         let baseStateNameInGLB = "as";
-        for (let i in configuration.spaceshipTypes) {
-            if (configuration.spaceshipTypes[i].typename == typename) {
+        for (let i in configuration.modelTypes) {
+            if (configuration.modelTypes[i].typename == typename) {
 
-                for (let j in configuration.spaceshipTypes[i].states) {
-                    this.states.set(configuration.spaceshipTypes[i].states[j].name, configuration.spaceshipTypes[i].states[j].nameInGLB);
+                for (let j in configuration.modelTypes[i].states) {
+                    this.states.set(configuration.modelTypes[i].states[j].name, configuration.modelTypes[i].states[j].nameInGLB);
 
-                    if (configuration.spaceshipTypes[i].states[j].name == "") {
-                        baseStateNameInGLB = configuration.spaceshipTypes[i].states[j].nameInGLB;
+                    if (configuration.modelTypes[i].states[j].name == "") {
+                        baseStateNameInGLB = configuration.modelTypes[i].states[j].nameInGLB;
                     }
                 }
-                for (let j in configuration.spaceshipTypes[i].animations) {
-                    this.animations.set(configuration.spaceshipTypes[i].animations[j].name, configuration.spaceshipTypes[i].animations[j].nameInGLB);
+                for (let j in configuration.modelTypes[i].animations) {
+                    this.animations.set(configuration.modelTypes[i].animations[j].name, configuration.modelTypes[i].animations[j].nameInGLB);
                 }
 
-                for (let j in configuration.spaceshipTypes[i].transitions) {
-                    this.transitions.push(new Transition(configuration.spaceshipTypes[i].transitions[j].from, configuration.spaceshipTypes[i].transitions[j].to, configuration.spaceshipTypes[i].transitions[j].nameInGLB));
+                for (let j in configuration.modelTypes[i].transitions) {
+                    this.transitions.push(new Transition(configuration.modelTypes[i].transitions[j].from, configuration.modelTypes[i].transitions[j].to, configuration.modelTypes[i].transitions[j].nameInGLB));
                 }
 
-                result = await SceneLoader.ImportMeshAsync("", "", configuration.spaceshipTypes[i].url);
+                result = await SceneLoader.ImportMeshAsync("", "", configuration.modelTypes[i].url);
                 let founded = false;
                 for (let j in result.animationGroups) {
                     if (result.animationGroups[j].name == baseStateNameInGLB) {

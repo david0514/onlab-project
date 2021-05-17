@@ -1,37 +1,18 @@
 {
-  "spaceshipTypes": [
+  "modelTypes": [
     {
       "typename": "plane",
       "url": "./models/planeWithPaint.glb",
       "nameInGLB": "p",
-      "animations": [
-        {
-          "name": "extraKepesseg",
-          "nameInGLB": "orso"
-        }
-      ],
-      "states": [
-        {
-          "name": "",
-          "nameInGLB": "lebeg"
-        },
-        {
-          "name": "halad",
-          "nameInGLB": "halad"
-        }
-      ],
+
+      "animations": [ { "name": "extraKepesseg", "nameInGLB": "orso" } ],
+
+      "states": [ { "name": "", "nameInGLB": "lebeg" },
+        { "name": "halad", "nameInGLB": "halad" } ],
+
       "transitions": [
-        {
-          "from": "",
-          "to": "halad",
-          "nameInGLB": "orso"
-        },
-        {
-          "from": "RELEASED",
-          "to": "PRESSED",
-          "nameInGLB": "anim2"
-        }
-      ]
+        { "from": "", "to": "halad", "nameInGLB": "orso" },
+        {"from": "RELEASED", "to": "PRESSED", "nameInGLB": "anim2"} ]
     }
   ]
 }

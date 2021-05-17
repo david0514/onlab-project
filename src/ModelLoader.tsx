@@ -8,11 +8,11 @@ export class ModelLoader {
 
     constructor() {
         this.currentMaxId=0;
-        this.configuration = this.getConfiguratin();
+        this.configuration = this.getConfiguration();
         console.log(this.configuration.toString());
     }
 
-    async getConfiguratin() {
+    async getConfiguration() {
         let resultJSON = await fetch("configuration.json");
         const result = await resultJSON.json();
         return result;

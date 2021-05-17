@@ -19,7 +19,6 @@ let plane:any;
 const onSceneReady = (scene: Scene) => {
     const canvas = scene.getEngine().getRenderingCanvas();
 
-    // This creates and positions a free camera (non-mesh)
     const camera = new ArcRotateCamera("camera", Math.PI / 4, Math.PI / 2.7, 14, new Vector3(0, 0, 0), scene);
     camera.attachControl(canvas, true);
 
@@ -31,14 +30,14 @@ const onSceneReady = (scene: Scene) => {
     ground.position.y = -6;
 
     let modelLoader = new ModelLoader();
-    modelLoader.getConfiguratin();
+    modelLoader.getConfiguration();
     let plane = modelLoader.loadModel("plane");
     plane.setPosition(new Vector3(1,1,-1));
-    //setTimeout(() => plane.playAnimation("extraKepesseg"), 4000);
+    plane.setRotation(new Vector3(0,0, 0));
     setTimeout(() => plane.setState("halad"), 10000);
-    //setTimeout(() => plane.playAnimation("extraKepesseg"), 12000);
     setTimeout(() => plane.setState(""), 20000);
-    setTimeout(() => plane.destroy(), 24000);
+    setTimeout(() => plane.playAnimation("extraKepesseg"), 28000);
+    setTimeout(() => plane.destroy(), 34000);
 
 };
 
